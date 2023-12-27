@@ -1,8 +1,8 @@
--- Active: 1703699147838@@127.0.0.1@3306
+-- Active: 1703030644373@@127.0.0.1@3306
 
 CREATE TABLE
     users (
-        id TEXT PRIMARY KEY UNIQUE  NOT NULL,
+        id TEXT PRIMARY KEY UNIQUE NOT NULL,
         name TEXT UNIQUE NOT NULL,
         email TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
@@ -12,45 +12,46 @@ CREATE TABLE
 
 CREATE TABLE
     posts(
-    id TEXT UNIQUE NOT NULL PRIMARY KEY,
-    creator_id TEXT UNIQUE NOT NULL,
-    content TEXT NOT NULL,
-    likes INTEGER NOT NULL DEFAULT(0),
-    dislikes INTEGER NOT NULL DEFAULT(0),
-    created_at TEXT NOT NULL,
-    updated_at TEXT NOT NULL,
-    FOREIGN KEY (creator_id) REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE
+        id TEXT UNIQUE NOT NULL PRIMARY KEY,
+        creator_id TEXT NOT NULL,
+        content TEXT NOT NULL,
+        likes INTEGER NOT NULL DEFAULT(0),
+        dislikes INTEGER NOT NULL DEFAULT(0),
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (creator_id) REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE
     );
 
 CREATE TABLE
-    coments(
-    id TEXT PRIMARY KEY UNIQUE  NOT NULL,
-    creator_id TEXT NOT NULL,
-    post_id TEXT NOT NULL,
-    content TEXT NOT NULL,
-    likes INTEGER NOT NULL DEFAULT(0),
-    dislikes INTEGER NOT NULL DEFAULT(0),
-    created_at TEXT NOT NULL,
-    updated_at TEXT NOT NULL,
-    FOREIGN KEY (creator_id) REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (post_id) REFERENCES posts (id) ON UPDATE CASCADE ON DELETE CASCADE
+    comments(
+        id TEXT PRIMARY KEY UNIQUE NOT NULL,
+        creator_id TEXT NOT NULL,
+        post_id TEXT NOT NULL,
+        content TEXT NOT NULL,
+        likes INTEGER NOT NULL DEFAULT(0),
+        dislikes INTEGER NOT NULL DEFAULT(0),
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (creator_id) REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
+        FOREIGN KEY (post_id) REFERENCES posts (id) ON UPDATE CASCADE ON DELETE CASCADE
     );
 
 CREATE TABLE
-    likes_dislikes_coments(
-    user_id TEXT NOT NULL,
-    coments_id TEXT NOT NULL,
-    like INTEGER,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (coments_id) REFERENCES coments (id) ON UPDATE CASCADE ON DELETE CASCADE
+    likes_dislikes_comments(
+        user_id TEXT NOT NULL,
+        comments_id TEXT NOT NULL,
+        like INTEGER,
+        FOREIGN KEY (user_id) REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
+        FOREIGN KEY (comments_id) REFERENCES comments (id) ON UPDATE CASCADE ON DELETE CASCADE
     )
 
 CREATE TABLE
-    likes_dislikes_posts(user_id TEXT NOT NULL,
-    post_id TEXT NOT NULL,
-    like INTEGER,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (post_id) REFERENCES posts (id) ON UPDATE CASCADE ON DELETE CASCADE
+    likes_dislikes_posts(
+        user_id TEXT NOT NULL,
+        post_id TEXT NOT NULL,
+        like INTEGER,
+        FOREIGN KEY (user_id) REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
+        FOREIGN KEY (post_id) REFERENCES posts (id) ON UPDATE CASCADE ON DELETE CASCADE
     );
 
 INSERT INTO users
@@ -71,8 +72,7 @@ VALUES (
     );
 
 INSERT INTO posts
-VALUES
-(
+VALUES (
         'p001',
         'u001',
         'Olá Mundo',
@@ -82,7 +82,7 @@ VALUES
         '2023-10-16T13:00:0.000Z'
     ), (
         'p002',
-        'u002',
+        'u001',
         'Olá Galera da minha rede',
         0,
         0,
@@ -90,10 +90,8 @@ VALUES
         '2023-10-16T13:00:0.000Z'
     );
 
-
-INSERT INTO coments
-VALUES
-(
+INSERT INTO comments
+VALUES (
         'c001',
         'u001',
         'p001',
@@ -104,9 +102,8 @@ VALUES
         '2023-10-16T13:00:0.000Z'
     );
 
-    INSERT INTO coments
-    VALUES
-    (
+INSERT INTO comments
+VALUES (
         'c002',
         'u001',
         'p001',
@@ -117,9 +114,8 @@ VALUES
         '2023-10-16T13:10:0.000Z'
     );
 
-    INSERT INTO coments
-    VALUES
-    (
+INSERT INTO comments
+VALUES (
         'c003',
         'u002',
         'p001',
@@ -130,19 +126,32 @@ VALUES
         '2023-10-16T13:12:0.000Z'
     )
 
+INSERT INTO
+    likes_dislikes_comments
+VALUES ('u001', 'c003', 0);
 
-    INSERT INTO likes_dislikes_coments VALUES (
-        'u001',
-        'c003',
-        0
-    );
+UPDATE comments SET likes = 1 WHERE id = 'c003';
 
-    UPDATE coments SET likes = 1 WHERE id = 'c003';
+INSERT INTO
+    likes_dislikes_posts
+VALUES ('u001', 'p002', 0);
 
-    
+UPDATE posts SET likes = 1 WHERE id = 'p002';
 
-    SELECT * FROM posts INNER JOIN coments ON coments.post_id = posts.id
+SELECT
+    posts.id,
+    posts.content AS conteudo,
+    posts.creator_id AS criador,
+    comments.id,
+    comments.content,
+    comments.likes,
+    comments.dislikes
+FROM comments
+    INNER JOIN posts ON comments.post_id = posts.id;
 
-    SELECT * FROM coments INNER JOIN likes_dislikes_coments ON coments.id = likes_dislikes_coments.coments_id
-
-    
+SELECT * FROM
+    posts 
+INNER JOIN 
+    likes_dislikes_posts
+ON 
+likes_dislikes_posts.post_id = posts.id;
