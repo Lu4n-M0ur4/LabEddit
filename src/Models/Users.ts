@@ -2,7 +2,7 @@ export enum USER_ROLES {
   NORMMAL = "NORMAL",
   ADMIN = "ADMIN",
 }
-export interface userDB {
+export interface UserDB {
   id: string;
   name: string;
   email: string;
@@ -69,5 +69,16 @@ export class User {
   }
   public setCreatedAt(value: string): void {
     this.createdAt = value;
+  }
+  
+  public toDBModel(): UserDB {
+    return {
+      id: this.id,
+      name: this.name,
+      email: this.email,
+      password: this.password,
+      role: this.role,
+      created_at: this.createdAt,
+    };
   }
 }
