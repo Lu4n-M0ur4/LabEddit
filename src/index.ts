@@ -1,10 +1,12 @@
 import express from "express"
 import cors from "cors"
 import dotenv from 'dotenv'
+import { userRouter } from "./Router/userRouter"
+import { postRouter } from "./Router/postRouter"
 
 dotenv.config()
 
-import { userRouter } from "./Router/userRouter"
+
 
 const app =  express()
 
@@ -16,4 +18,4 @@ app.listen(3003,()=>{
 })
 
 app.use("/users", userRouter)
-app.use("/signup", userRouter)
+app.use("/posts", postRouter)
