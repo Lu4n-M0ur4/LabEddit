@@ -22,3 +22,4 @@ postRouter.get("/", postController.getAllPosts);
 postRouter.post("/", postController.createPost);
 postRouter.delete("/:id", postController.deletePost);
 postRouter.put("/:id", postController.updatePost);
+postRouter.put("/:id/like", postController.likeOrDislikePost);

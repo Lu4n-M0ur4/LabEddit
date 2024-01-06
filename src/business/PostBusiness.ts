@@ -1,4 +1,10 @@
-import { Post, PostDB, PostModel } from "../Models/Posts";
+import {
+  POST_LIKE,
+  Post,
+  PostDB,
+  PostModel,
+  likeOrDislike,
+} from "../Models/Posts";
 import { USER_ROLES } from "../Models/Users";
 import { PostDataBase } from "../dataBase/PostDataBase";
 import {
@@ -13,6 +19,10 @@ import {
   GetAllPostsInputDTO,
   GetAllPostsOutputDTO,
 } from "../dtos/post/getAllPosts";
+import {
+  LikeOrDislikePostInputDTO,
+  LikeOrDislikePostOutputDTO,
+} from "../dtos/post/likeOrDislikePost";
 import {
   UpdatePostInputDTO,
   UpdatePostOutputDTO,
@@ -121,6 +131,7 @@ export class PostBusiness {
     if (!postDB) {
       throw new BadRequestError("Post não existe em nossa base de dados!!!");
     }
+
     if (postDB.creator_id !== payload.id) {
       throw new BadRequestError(
         "Somente o criador deste post pode alterá-lo!!"
@@ -197,9 +208,98 @@ export class PostBusiness {
       return results;
     });
 
-
-
     const output: GetAllPostsOutputDTO = postModel;
+
+    return output;
+  };
+
+  public likeOrDislikePost = async (
+    input: LikeOrDislikePostInputDTO
+  ): Promise<LikeOrDislikePostOutputDTO> => {
+    const { token, postId, like } = input;
+
+    const payload = this.tokenManager.getPayload(token);
+
+    if (!payload) {
+      throw new BadRequestError("Faça loguin novamente!!!");
+    }
+
+    const postDB = await this.postDataBase.findPost(postId);
+
+    if (!postDB) {
+      throw new BadRequestError("Post não existe em nossa base de dados!!!");
+    }
+
+    if (postDB.creator_id === payload.id) {
+      throw new BadRequestError("Você criou este post, não pode curti-lo!!!");
+    }
+
+    const postModel = new Post(
+      postDB.id,
+      postDB.creator_id,
+      postDB.content,
+      postDB.likes,
+      postDB.dislikes,
+      postDB.created_at,
+      postDB.updated_at
+    );
+
+    const likeSqlLite = like ? 1 : 0;
+
+    const likeOrDislikeDB: likeOrDislike = {
+      user_id: payload.id,
+      post_id: postId,
+      like: likeSqlLite,
+    };
+
+    const likeDislikeExist = await this.postDataBase.findPostLikedDisliked(
+      likeOrDislikeDB
+    );
+
+    console.log(likeDislikeExist);
+
+    if (likeDislikeExist === POST_LIKE.ALREADY_LIKED) {
+      if (like) {
+        await this.postDataBase.findPostLikedDisliked(likeOrDislikeDB);
+        await this.postDataBase.deleteLikeOrDislike(likeOrDislikeDB);
+        postModel.setLikes(0);
+      } else {
+        await this.postDataBase.findPostLikedDisliked(likeOrDislikeDB);
+        await this.postDataBase.updateLikeOrDislike(likeOrDislikeDB);
+        postModel.setLikes(0);
+        postModel.setDislikes(1);
+      }
+    } else if (likeDislikeExist === POST_LIKE.ALREADY_DISLIKED) {
+      if (!like) {
+        await this.postDataBase.findPostLikedDisliked(likeOrDislikeDB);
+        await this.postDataBase.deleteLikeOrDislike(likeOrDislikeDB);
+        postModel.setDislikes(0);
+      } else {
+        await this.postDataBase.findPostLikedDisliked(likeOrDislikeDB);
+        await this.postDataBase.updateLikeOrDislike(likeOrDislikeDB);
+        postModel.setDislikes(0);
+        postModel.setLikes(1);
+      }
+    } else {
+      await this.postDataBase.findPostLikedDisliked(likeOrDislikeDB);
+      await this.postDataBase.insertLikeOrDislike(likeOrDislikeDB);
+      like ? postModel.setLikes(1) : postModel.setDislikes(1);
+    }
+
+
+    const newPostDBLikedOrDisliked: PostDB = {
+      id: postModel.getId(),
+      creator_id: postModel.getCreatorId(),
+      content: postModel.getContent(),
+      likes: postModel.getLikes(),
+      dislikes: postModel.getDislikes(),
+      created_at: postModel.getCreatedAt(),
+      updated_at: postModel.getUpdatedAt(),
+    };
+
+    await this.postDataBase.updatePost(newPostDBLikedOrDisliked);
+
+    const output: LikeOrDislikePostOutputDTO = undefined;
 
     return output;
   };
