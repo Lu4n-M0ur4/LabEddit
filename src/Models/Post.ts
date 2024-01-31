@@ -17,8 +17,32 @@ export interface PostDB {
   dislikes: number;
   created_at: string;
   updated_at: string;
+ 
 }
 
+export interface PostDBAndCreator {
+  id: string;
+  creator_id: string;
+  content: string;
+  likes: number;
+  dislikes: number;
+  created_at: string;
+  updated_at: string;
+  creator_name: string;
+}
+
+export interface PostModelForCratorName {
+  id: string;
+  content: string;
+  likes: number;
+  dislikes: number;
+  createdAt: string;
+  updatedAt: string;
+  creator: {
+    creatorId?: string;
+    creatorName?: string;
+  };
+}
 export interface PostModel {
   id: string;
   creatorId: string;
@@ -37,7 +61,9 @@ export class Post {
     private likes: number,
     private dislikes: number,
     private createdAt: string,
-    private updatedAt: string
+    private updatedAt: string,
+    private creatorName:string
+
   ) {}
 
   public getId(): string {
@@ -88,4 +114,27 @@ export class Post {
   public setUpdatedAt(value: string) {
     this.updatedAt = value;
   }
+  public getCreatorName(): string {
+    return this.creatorName ;
+  }
+  public setCreatorName(value: string) {
+    this.creatorName = value;
+  }
+
+  public addLike = (): void => {
+    this.likes++
+  }
+
+  public removeLike = (): void => {
+    this.likes--
+  }
+
+  public addDislike = (): void => {
+    this.dislikes++
+  }
+
+  public removeDislike = (): void => {
+    this.dislikes--
+  }
+
 }

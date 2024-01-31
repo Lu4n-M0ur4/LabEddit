@@ -3,6 +3,7 @@ import cors from "cors"
 import dotenv from 'dotenv'
 import { userRouter } from "./Router/userRouter"
 import { postRouter } from "./Router/postRouter"
+import { commentRouter } from "./Router/commentRouter"
 
 dotenv.config()
 
@@ -19,3 +20,4 @@ app.listen(3003,()=>{
 
 app.use("/users", userRouter)
 app.use("/posts", postRouter)
+app.use("/comment",commentRouter)

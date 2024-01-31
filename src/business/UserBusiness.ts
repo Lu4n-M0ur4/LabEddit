@@ -1,12 +1,12 @@
-import { USER_ROLES, User, UserDB, UserModel } from "../Models/Users";
+import { USER_ROLES, User, UserDB, UserModel } from "../Models/User";
 import { UserDataBase } from "../dataBase/UserDataBase";
 import {
   GetUserSchema,
   GetUsersInputDto,
   GetUsersOutputDto,
-} from "../dtos/users/getUsers";
-import { LoginInputDto, LoginOutputDto } from "../dtos/users/login";
-import { SignupInputDto, SignupOutputDto } from "../dtos/users/signup";
+} from "../dtos/users/getUsers.dto";
+import { LoginInputDto, LoginOutputDto } from "../dtos/users/login.dto";
+import { SignupInputDto, SignupOutputDto } from "../dtos/users/signup.dto";
 import { BadRequestError } from "../errors/BadRequestError";
 import { HashManager } from "../services/HashManager";
 import { IdGenerator } from "../services/IdGenerator";
@@ -110,25 +110,25 @@ export class UserBusiness {
 
     return output;
   };
-  
+
   public login = async (input: LoginInputDto): Promise<LoginOutputDto> => {
     const { email, password } = input;
 
-    const userDBExist = await this.userDataBase.findUserByEmail(email);
+    const userDBExist: UserDB | undefined =
+      await this.userDataBase.findUserByEmail(email);
 
     if (!userDBExist) {
       throw new BadRequestError("E-mail ou senha incorretos");
     }
 
     const passwordHash = userDBExist.password;
-   
 
     const hashedPassword = await this.hashManager.compare(
       password,
       passwordHash
     );
 
-    if(!hashedPassword){
+    if (!hashedPassword) {
       throw new BadRequestError("E-mail ou senha incorretos");
     }
 
@@ -140,7 +140,6 @@ export class UserBusiness {
       userDBExist.role,
       userDBExist.created_at
     );
-
 
     const tokenPayload: TokenPayload = {
       id: user.getId(),

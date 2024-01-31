@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import { UserBusiness } from "../business/UserBusiness";
 import { ZodError } from "zod";
 import { BaseError } from "../errors/BaseError";
-import { GetUserSchema } from "../dtos/users/getUsers";
-import { SignupSchema } from "../dtos/users/signup";
-import { LoginSchema } from "../dtos/users/login";
+import { GetUserSchema } from "../dtos/users/getUsers.dto";
+import { SignupSchema } from "../dtos/users/signup.dto";
+import { LoginSchema } from "../dtos/users/login.dto";
 
 export class UserController {
   constructor(private userBusiness: UserBusiness) {}

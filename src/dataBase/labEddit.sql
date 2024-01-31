@@ -126,6 +126,20 @@ VALUES (
         '2023-10-16T13:12:0.000Z'
     )
 
+INSERT INTO comments
+VALUES (
+        'c004',
+        'u002',
+        'p001',
+        'teste interando comments',
+        0,
+        0,
+        '2023-10-16T13:12:0.000Z',
+        '2023-10-16T13:12:0.000Z'
+    )
+
+SELECT * FROM comments;
+
 INSERT INTO
     likes_dislikes_comments
 VALUES ('u001', 'c003', 0);

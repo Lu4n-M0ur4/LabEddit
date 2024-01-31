@@ -4,11 +4,11 @@ import { ZodError } from "zod";
 import { BaseError } from "../errors/BaseError";
 
 import { PostBusiness } from "../business/PostBusiness";
-import { deletePostSchema } from "../dtos/post/deletePost";
-import { createPostSchema } from "../dtos/post/createPost";
-import { updatePostSchema } from "../dtos/post/updatePost";
-import { getAllPostsSchema } from "../dtos/post/getAllPosts";
-import { likeOrDislikePostSchema } from "../dtos/post/likeOrDislikePost";
+import { deletePostSchema } from "../dtos/post/deletePost.dto";
+import { createPostSchema } from "../dtos/post/createPost.dto";
+import { updatePostSchema } from "../dtos/post/updatePost.dto";
+import { getAllPostsSchema } from "../dtos/post/getAllPosts.dto";
+import { likeOrDislikePostSchema } from "../dtos/post/likeOrDislikePost.dto";
 
 export class PostController {
   constructor(private postBusiness: PostBusiness) {}

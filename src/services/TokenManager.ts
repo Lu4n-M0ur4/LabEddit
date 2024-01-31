@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { USER_ROLES } from "../Models/Users";
+import { USER_ROLES } from "../Models/User";
 import jwt from "jsonwebtoken";
 
 dotenv.config();

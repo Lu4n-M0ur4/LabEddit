@@ -3,30 +3,31 @@ import {
   Post,
   PostDB,
   PostModel,
+  PostModelForCratorName,
   likeOrDislike,
-} from "../Models/Posts";
-import { USER_ROLES } from "../Models/Users";
+} from "../Models/Post";
+import { USER_ROLES } from "../Models/User";
 import { PostDataBase } from "../dataBase/PostDataBase";
 import {
   createPostInputDTO,
   createPostOutputDTO,
-} from "../dtos/post/createPost";
+} from "../dtos/post/createPost.dto";
 import {
   deletePostInputDTO,
   deletePostOutputDTO,
-} from "../dtos/post/deletePost";
+} from "../dtos/post/deletePost.dto";
 import {
   GetAllPostsInputDTO,
   GetAllPostsOutputDTO,
-} from "../dtos/post/getAllPosts";
+} from "../dtos/post/getAllPosts.dto";
 import {
   LikeOrDislikePostInputDTO,
   LikeOrDislikePostOutputDTO,
-} from "../dtos/post/likeOrDislikePost";
+} from "../dtos/post/likeOrDislikePost.dto";
 import {
   UpdatePostInputDTO,
   UpdatePostOutputDTO,
-} from "../dtos/post/updatePost";
+} from "../dtos/post/updatePost.dto";
 
 import { BadRequestError } from "../errors/BadRequestError";
 import { NotFoundError } from "../errors/NotFoundError";
@@ -63,7 +64,8 @@ export class PostBusiness {
       0,
       0,
       new Date().toISOString(),
-      new Date().toISOString()
+      new Date().toISOString(),
+      payload.name
     );
 
     const newPostDB: PostDB = {
@@ -74,6 +76,7 @@ export class PostBusiness {
       dislikes: post.getDislikes(),
       created_at: post.getCreatedAt(),
       updated_at: post.getUpdatedAt(),
+      
     };
 
     await this.postDataBase.insertPost(newPostDB);
@@ -145,7 +148,8 @@ export class PostBusiness {
       0,
       0,
       postDB.created_at,
-      new Date().toISOString()
+      new Date().toISOString(),
+      payload.name
     );
 
     post.setContent(content);
@@ -158,6 +162,7 @@ export class PostBusiness {
       dislikes: post.getDislikes(),
       created_at: post.getCreatedAt(),
       updated_at: post.getUpdatedAt(),
+      
     };
 
     await this.postDataBase.updatePost(newPostDB);
@@ -178,11 +183,13 @@ export class PostBusiness {
       throw new BadRequestError("Faça loguin novamente!!!");
     }
 
-    const postsDB = await this.postDataBase.getAllPosts();
+      const postsDB = await this.postDataBase.getAllPosts();
 
     if (!postsDB) {
       throw new NotFoundError("Ainda não possuimos nenhum post!!!");
     }
+
+    
 
     const postModel = postsDB.map((p) => {
       const post = new Post(
@@ -192,27 +199,34 @@ export class PostBusiness {
         p.likes,
         p.dislikes,
         p.created_at,
-        p.updated_at
+        p.updated_at,
+        p.creator_name
       );
 
-      const results: PostModel = {
+      const results: PostModelForCratorName = {
         id: post.getId(),
-        creatorId: post.getCreatorId(),
+      
         content: post.getContent(),
         likes: post.getLikes(),
         dislikes: post.getDislikes(),
         createdAt: post.getCreatedAt(),
         updatedAt: post.getUpdatedAt(),
+        creator:{
+          creatorId: post.getCreatorId(),
+          creatorName:post.getCreatorName()
+        }
       };
 
       return results;
     });
 
+
+
     const output: GetAllPostsOutputDTO = postModel;
 
     return output;
   };
-
+  
   public likeOrDislikePost = async (
     input: LikeOrDislikePostInputDTO
   ): Promise<LikeOrDislikePostOutputDTO> => {
@@ -241,7 +255,8 @@ export class PostBusiness {
       postDB.likes,
       postDB.dislikes,
       postDB.created_at,
-      postDB.updated_at
+      postDB.updated_at,
+      postDB.creator_name
     );
 
     const likeSqlLite = like ? 1 : 0;
@@ -256,34 +271,34 @@ export class PostBusiness {
       likeOrDislikeDB
     );
 
-    console.log(likeDislikeExist);
+
+   
 
     if (likeDislikeExist === POST_LIKE.ALREADY_LIKED) {
       if (like) {
-        await this.postDataBase.findPostLikedDisliked(likeOrDislikeDB);
+
         await this.postDataBase.deleteLikeOrDislike(likeOrDislikeDB);
-        postModel.setLikes(0);
+        postModel.removeLike();
       } else {
-        await this.postDataBase.findPostLikedDisliked(likeOrDislikeDB);
+
         await this.postDataBase.updateLikeOrDislike(likeOrDislikeDB);
-        postModel.setLikes(0);
-        postModel.setDislikes(1);
+        postModel.removeLike();
+        postModel.addDislike();
       }
     } else if (likeDislikeExist === POST_LIKE.ALREADY_DISLIKED) {
       if (!like) {
-        await this.postDataBase.findPostLikedDisliked(likeOrDislikeDB);
+
         await this.postDataBase.deleteLikeOrDislike(likeOrDislikeDB);
-        postModel.setDislikes(0);
+        postModel.removeDislike();
       } else {
-        await this.postDataBase.findPostLikedDisliked(likeOrDislikeDB);
+
         await this.postDataBase.updateLikeOrDislike(likeOrDislikeDB);
-        postModel.setDislikes(0);
-        postModel.setLikes(1);
+        postModel.removeDislike();
+        postModel.addLike();
       }
     } else {
-      await this.postDataBase.findPostLikedDisliked(likeOrDislikeDB);
       await this.postDataBase.insertLikeOrDislike(likeOrDislikeDB);
-      like ? postModel.setLikes(1) : postModel.setDislikes(1);
+      like ? postModel.addLike() : postModel.addDislike();
     }
 
 
@@ -300,7 +315,6 @@ export class PostBusiness {
     await this.postDataBase.updatePost(newPostDBLikedOrDisliked);
 
     const output: LikeOrDislikePostOutputDTO = undefined;
-
     return output;
   };
 }

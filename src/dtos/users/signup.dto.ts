@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { UserModel } from "../../Models/Users";
+import { UserModel } from "../../Models/User";
 
 
 export interface SignupInputDto{

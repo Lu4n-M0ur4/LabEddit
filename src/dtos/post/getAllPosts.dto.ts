@@ -1,11 +1,12 @@
 import { z } from "zod";
-import { PostModel } from "../../Models/Posts";
+import { PostModelForCratorName } from "../../Models/Post";
 
 export interface GetAllPostsInputDTO {
   token: string;
 }
 
-export type GetAllPostsOutputDTO = PostModel[];
+
+export type GetAllPostsOutputDTO = PostModelForCratorName[];
 
 export const getAllPostsSchema = z
   .object({
