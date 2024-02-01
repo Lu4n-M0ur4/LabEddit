@@ -190,7 +190,7 @@ export class CommentBusiness {
     if (commentDB.creator_id === payload.id) {
       throw new BadRequestError("Você criou este post, não pode curti-lo!!!");
     }
-    console.log(commentDB);
+
 
     const commentModel = new Comment(
       commentDB.id,
