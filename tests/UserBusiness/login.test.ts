@@ -13,7 +13,7 @@ describe("Testes de login da UserBusiness", () => {
     new HashManagerMock(),
     new IdGeneratorMock()
   );
-  test("deve retornar token ao se logar corretamente", async () => {
+  test("Deve retornar token ao se logar corretamente", async () => {
     const input = LoginSchema.parse({
       email: "fulano@email.com",
       password: "fulano123",

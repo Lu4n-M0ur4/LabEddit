@@ -7,14 +7,14 @@ import { TokenManagerMock } from "../mocks/TokenManagerMock";
 import { UserDatabaseMock } from "../mocks/UserDatabaseMock";
 import { SignupSchema } from "../../src/dtos/users/signup.dto";
 
-describe("Testes de login da UserBusiness", () => {
+describe("Testes de signup da UserBusiness", () => {
   const userBusiness = new UserBusiness(
     new TokenManagerMock(),
     new UserDatabaseMock(),
     new HashManagerMock(),
     new IdGeneratorMock()
   );
-  test("deve retornar token ao se cadastrar corretamente", async () => {
+  test("Deve retornar token ao se cadastrar corretamente", async () => {
     const input = SignupSchema.parse({
       name:"Luan",
       email: "Luan@email.com",

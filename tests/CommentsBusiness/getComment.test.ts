@@ -3,7 +3,7 @@ import { PostDatabaseMock } from "../mocks/PostDatabaseMock";
 import { TokenManagerMock } from "../mocks/TokenManagerMock";
 import { IdGeneratorMock } from "../mocks/IdGeneratorMock";
 import { CommentDatabaseMock } from "../mocks/CommentDatabaseMock";
-import { getCommentSchema } from "../../src/dtos/comment/getComments.dto";
+import { GetCommentSchema } from "../../src/dtos/comment/getComments.dto";
 
 describe("Testando usabilidadde de postBusiness", () => {
   const commentBusiness = new CommentBusiness(
@@ -13,8 +13,8 @@ describe("Testando usabilidadde de postBusiness", () => {
     new PostDatabaseMock()
   );
 
-  test("Deve criar um post ", async () => {
-    const input = getCommentSchema.parse({
+  test("Deve retornar uma lista de comentários sobre um post ", async () => {
+    const input = GetCommentSchema.parse({
       token: "token-mock-fulano",
       idToPost: "id-mock",
     });

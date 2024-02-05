@@ -3,10 +3,10 @@ import { PostDatabaseMock } from "../mocks/PostDatabaseMock";
 import { TokenManagerMock } from "../mocks/TokenManagerMock";
 import { HashManagerMock } from "../mocks/HashManagerMock";
 import { IdGeneratorMock } from "../mocks/IdGeneratorMock";
-import { createPostSchema } from "../../src/dtos/post/createPost.dto";
-import { PostDB } from "../../src/Models/Post";
+import { CreatePostSchema } from "../../src/dtos/post/createPost.dto";
+;
 
-describe("Testando usabilidadde de postBusiness", () => {
+describe("Testando usabilidade de postBusiness", () => {
   const postBusiness = new PostBusiness(
     new TokenManagerMock(),
     new PostDatabaseMock(),
@@ -15,7 +15,7 @@ describe("Testando usabilidadde de postBusiness", () => {
   );
 
   test("Deve criar um post ", async () => {
-    const input = createPostSchema.parse({
+    const input = CreatePostSchema.parse({
       token: "token-mock-fulano",
       content: "Conteudo do post MOCK",
     });    

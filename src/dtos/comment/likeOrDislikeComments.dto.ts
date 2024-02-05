@@ -9,7 +9,7 @@ export interface LikeOrDislikeCommentInputDTO {
 
 export type LikeOrDislikeCommentOutputDTO = undefined;
 
-export const likeOrDislikeCommentSchema = z
+export const LikeOrDislikeCommentSchema = z
   .object({
     token: z.string().min(1),
     idToComment:z.string().min(2),

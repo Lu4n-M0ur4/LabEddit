@@ -8,7 +8,7 @@ export interface GetCommentInputDTO {
 
 export type GetCommentOutputDTO = CommentModelByPost;
 
-export const getCommentSchema = z
+export const GetCommentSchema = z
   .object({
     token: z.string().min(1),
     idToPost:z.string().min(2)

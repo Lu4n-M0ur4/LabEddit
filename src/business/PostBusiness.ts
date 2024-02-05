@@ -9,12 +9,12 @@ import {
 import { USER_ROLES } from "../Models/User";
 import { PostDataBase } from "../dataBase/PostDataBase";
 import {
-  createPostInputDTO,
-  createPostOutputDTO,
+  CreatePostInputDTO,
+  CreatePostOutputDTO,
 } from "../dtos/post/createPost.dto";
 import {
-  deletePostInputDTO,
-  deletePostOutputDTO,
+  DeletePostInputDTO,
+  DeletePostOutputDTO,
 } from "../dtos/post/deletePost.dto";
 import {
   GetAllPostsInputDTO,
@@ -45,8 +45,8 @@ export class PostBusiness {
   ) {}
 
   public createPost = async (
-    input: createPostInputDTO
-  ): Promise<createPostOutputDTO> => {
+    input: CreatePostInputDTO
+  ): Promise<CreatePostOutputDTO> => {
     const { token, content } = input;
 
     const payload = this.tokenManager.getPayload(token);
@@ -81,14 +81,14 @@ export class PostBusiness {
 
     await this.postDataBase.insertPost(newPostDB);
 
-    const output: createPostOutputDTO = undefined;
+    const output: CreatePostOutputDTO = undefined;
 
     return output;
   };
 
   public deletePost = async (
-    input: deletePostInputDTO
-  ): Promise<deletePostOutputDTO> => {
+    input: DeletePostInputDTO
+  ): Promise<DeletePostOutputDTO> => {
     const { token, idToDelete } = input;
 
     const payload = this.tokenManager.getPayload(token);
@@ -113,7 +113,7 @@ export class PostBusiness {
 
     await this.postDataBase.deletePost(idToDelete);
 
-    const output: deletePostOutputDTO = undefined;
+    const output: DeletePostOutputDTO = undefined;
 
     return output;
   };
@@ -167,7 +167,7 @@ export class PostBusiness {
 
     await this.postDataBase.updatePost(newPostDB);
 
-    const output: createPostOutputDTO = undefined;
+    const output: CreatePostOutputDTO = undefined;
 
     return output;
   };

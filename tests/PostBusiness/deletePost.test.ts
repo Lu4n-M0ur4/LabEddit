@@ -3,9 +3,7 @@ import { PostDatabaseMock } from "../mocks/PostDatabaseMock";
 import { TokenManagerMock } from "../mocks/TokenManagerMock";
 import { HashManagerMock } from "../mocks/HashManagerMock";
 import { IdGeneratorMock } from "../mocks/IdGeneratorMock";
-import { createPostSchema } from "../../src/dtos/post/createPost.dto";
-import { PostDB } from "../../src/Models/Post";
-import { deletePostSchema } from "../../src/dtos/post/deletePost.dto";
+import { DeletePostSchema } from "../../src/dtos/post/deletePost.dto";
 
 describe("Testando usabilidadde de postBusiness", () => {
   const postBusiness = new PostBusiness(
@@ -15,8 +13,8 @@ describe("Testando usabilidadde de postBusiness", () => {
     new IdGeneratorMock()
   );
 
-  test("Deve criar um post ", async () => {
-    const input = deletePostSchema.parse({
+  test("Deve deletar um post ", async () => {
+    const input = DeletePostSchema.parse({
       token: "token-mock-fulano",
       idToDelete: "id-mock",
     });    

@@ -13,7 +13,7 @@ describe("Testando usabilidadde de postBusiness", () => {
     new IdGeneratorMock()
   );
 
-  test("Deve criar um post ", async () => {
+  test("Deve criar retornar undefined se com sucesso inserir um like na tabela de likes_dislikes ", async () => {
     const input = likeOrDislikePostSchema.parse({
       token:"token-mock-astrodev",
       postId:"id-mock",

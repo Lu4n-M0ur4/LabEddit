@@ -4,8 +4,8 @@ import { ZodError } from "zod";
 import { BaseError } from "../errors/BaseError";
 
 import { PostBusiness } from "../business/PostBusiness";
-import { deletePostSchema } from "../dtos/post/deletePost.dto";
-import { createPostSchema } from "../dtos/post/createPost.dto";
+import { DeletePostSchema } from "../dtos/post/deletePost.dto";
+import { CreatePostSchema } from "../dtos/post/createPost.dto";
 import { updatePostSchema } from "../dtos/post/updatePost.dto";
 import { GetAllPostsSchema } from "../dtos/post/getAllPosts.dto";
 import { likeOrDislikePostSchema } from "../dtos/post/likeOrDislikePost.dto";
@@ -15,7 +15,7 @@ export class PostController {
 
   public createPost = async (req: Request, res: Response) => {
     try {
-      const input = createPostSchema.parse({
+      const input = CreatePostSchema.parse({
         token: req.headers.authorization,
         content: req.body.content,
       });
@@ -86,7 +86,7 @@ export class PostController {
 
   public deletePost = async (req: Request, res: Response) => {
     try {
-      const input = deletePostSchema.parse({
+      const input = DeletePostSchema.parse({
         token: req.headers.authorization,
         idToDelete: req.params.id,
       });

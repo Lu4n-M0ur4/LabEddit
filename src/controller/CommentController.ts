@@ -3,16 +3,16 @@ import { Request, Response } from "express";
 import { ZodError } from "zod";
 import { BaseError } from "../errors/BaseError";
 import { CommentBusiness } from "../business/CommentBusiness";
-import { getCommentSchema } from "../dtos/comment/getComments.dto";
-import { createCommentSchema } from "../dtos/comment/createComments.dto";
-import { likeOrDislikeCommentSchema } from "../dtos/comment/likeOrDislikeComments.dto";
+import { GetCommentSchema } from "../dtos/comment/getComments.dto";
+import { CreateCommentSchema } from "../dtos/comment/createComments.dto";
+import { LikeOrDislikeCommentSchema } from "../dtos/comment/likeOrDislikeComments.dto";
 
 export class CommentController {
   constructor(private commentBusiness: CommentBusiness) {}
 
   public getComments = async (req: Request, res: Response) => {
     try {
-      const input = getCommentSchema.parse({
+      const input = GetCommentSchema.parse({
         token: req.headers.authorization,
         idToPost: req.params.id,
       });
@@ -34,7 +34,7 @@ export class CommentController {
   };
   public createComments = async (req: Request, res: Response) => {
     try {
-      const input = createCommentSchema.parse({
+      const input = CreateCommentSchema.parse({
         token: req.headers.authorization,
         idToPost: req.params.id,
         content: req.body.content,
@@ -58,7 +58,7 @@ export class CommentController {
 
   public likeOrDislikeComment = async (req: Request, res: Response) => {
     try {
-      const input = likeOrDislikeCommentSchema.parse({
+      const input = LikeOrDislikeCommentSchema.parse({
         token: req.headers.authorization,
         idToComment: req.params.id,
         like: req.body.like,
@@ -66,7 +66,7 @@ export class CommentController {
 
       const output = await this.commentBusiness.likeOrDislikeComment(input);
 
-      res.status(200).send(output);
+      res.status(201).send(output);
     } catch (error) {
       console.log(error);
 

@@ -9,7 +9,7 @@ import { GetUserSchema } from "../../src/dtos/users/getUsers.dto";
 import { USER_ROLES } from "../../src/Models/User";
 import { BadRequestError } from "../../src/errors/BadRequestError";
 
-describe("Testes de login da UserBusiness", () => {
+describe("Testes de getUser da UserBusiness", () => {
   const userBusiness = new UserBusiness(
     new TokenManagerMock(),
     new UserDatabaseMock(),
@@ -17,7 +17,7 @@ describe("Testes de login da UserBusiness", () => {
     new IdGeneratorMock()
   );
 
-  test("deve retornar token ao se cadastrar corretamente", async () => {
+  test("Deve retornar a lista de usuários se for um ADMIN", async () => {
     const input = GetUserSchema.parse({
       token: "token-mock-astrodev",
     });
