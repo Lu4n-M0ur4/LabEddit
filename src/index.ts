@@ -1,8 +1,13 @@
-import express, { Request, Response, request } from "express"
+import express from "express"
 import cors from "cors"
-import { UserBusiness } from "./business/UserBusiness"
-import { TokenManager } from "./services/TokenManager"
-import { UserDataBase } from "./dataBase/UserDataBase"
+import dotenv from 'dotenv'
+import { userRouter } from "./Router/userRouter"
+import { postRouter } from "./Router/postRouter"
+import { commentRouter } from "./Router/commentRouter"
+
+dotenv.config()
+
+
 
 const app =  express()
 
@@ -10,11 +15,9 @@ app.use(cors())
 app.use(express.json())
 
 app.listen(3003,()=>{
-    console.log(`servidor rodado na porta 3003`)
+    console.log(`servidor rodado na porta ${process.env.PORT}`)
 })
 
-app.get("/ping", async (req:Request, res:Response)=>{
-    const response = new UserBusiness(new TokenManager(),new UserDataBase())
-    const resp = await response.getUsers()
-    res.send(resp)
-})
+app.use("/users", userRouter)
+app.use("/posts", postRouter)
+app.use("/comment",commentRouter)

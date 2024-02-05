@@ -1,3 +1,5 @@
+import { PostDB, PostModel, PostModelForCratorName } from "./Post";
+
 export interface CommentsDB {
   id: string;
   creator_id: string;
@@ -7,9 +9,52 @@ export interface CommentsDB {
   dislikes: number;
   created_at: string;
   updated_at: string;
+ 
 }
 
-export class Comments {
+export interface CommentsDBAndCreator {
+  id: string;
+  creator_id: string;
+  post_id: string;
+  content: string;
+  likes: number;
+  dislikes: number;
+  created_at: string;
+  updated_at: string;
+  creator_name: string;
+}
+
+export interface CommentModel {
+  id: string;
+  postId: string;
+  content: string;
+  likes: number;
+  dislikes: number;
+  createdAt: string;
+  updatedAt: string;
+  creator:{
+    idCreator:string;
+    creatorName: string;
+  }
+}
+
+export interface likeOrDislikeComment  {
+  user_id:string;
+  comments_id:string,
+  like: number,
+}
+
+export enum COMMENT_LIKE { 
+  ALREADY_LIKED = "ALREADY LIKED",
+  ALREADY_DISLIKED = "ALREADY DISLIKED"
+}
+
+export interface CommentModelByPost {
+  post: PostModelForCratorName;
+  comments:CommentModel[]
+}
+
+export class Comment {
   constructor(
     private id: string,
     private creatorId: string,
@@ -18,7 +63,8 @@ export class Comments {
     private likes: number,
     private dislikes: number,
     private createdAt: string,
-    private updatedAt: string
+    private updatedAt: string,
+    private creatorName: string
   ) {}
 
   public getId(): string {
@@ -52,8 +98,16 @@ export class Comments {
   public getLikes(): number {
     return this.likes;
   }
-  public setLikes(value: number): void {
+  public setLikes(value: number ): void {
     this.likes = value;
+  }
+
+  public addLike = (): void => {
+    this.likes++
+  }
+
+  public removeLike = (): void => {
+    this.likes--
   }
 
   public getDislikes(): number {
@@ -61,6 +115,14 @@ export class Comments {
   }
   public setDislikes(value: number): void {
     this.dislikes = value;
+  }
+
+  public addDislike = (): void => {
+    this.dislikes++
+  }
+
+  public removeDislike = (): void => {
+    this.dislikes--
   }
 
   public getCreatedAt(): string {
@@ -75,5 +137,11 @@ export class Comments {
   }
   public setUpdatedAt(value: string): void {
     this.updatedAt = value;
+  }
+  public getCreatorName(): string {
+    return this.creatorName;
+  }
+  public setCreatorName(value: string): void {
+    this.creatorName = value;
   }
 }
