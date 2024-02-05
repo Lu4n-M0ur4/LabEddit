@@ -39,8 +39,8 @@ export interface PostModelForCratorName {
   createdAt: string;
   updatedAt: string;
   creator: {
-    creatorId?: string;
-    creatorName?: string;
+    creatorId: string;
+    creatorName: string;
   };
 }
 export interface PostModel {

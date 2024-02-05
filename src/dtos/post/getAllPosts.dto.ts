@@ -8,7 +8,7 @@ export interface GetAllPostsInputDTO {
 
 export type GetAllPostsOutputDTO = PostModelForCratorName[];
 
-export const getAllPostsSchema = z
+export const GetAllPostsSchema = z
   .object({
     token: z.string().min(1),
  

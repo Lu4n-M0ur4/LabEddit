@@ -7,7 +7,7 @@ import { PostBusiness } from "../business/PostBusiness";
 import { deletePostSchema } from "../dtos/post/deletePost.dto";
 import { createPostSchema } from "../dtos/post/createPost.dto";
 import { updatePostSchema } from "../dtos/post/updatePost.dto";
-import { getAllPostsSchema } from "../dtos/post/getAllPosts.dto";
+import { GetAllPostsSchema } from "../dtos/post/getAllPosts.dto";
 import { likeOrDislikePostSchema } from "../dtos/post/likeOrDislikePost.dto";
 
 export class PostController {
@@ -38,7 +38,7 @@ export class PostController {
 
   public getAllPosts = async (req: Request, res: Response) => {
     try {
-      const input = getAllPostsSchema.parse({
+      const input = GetAllPostsSchema.parse({
         token: req.headers.authorization,
       });
 
