@@ -56,6 +56,7 @@ export class CommentBusiness {
 
     const postById = await this.postDataBase.findPost(idToPost);
 
+  
     if (!postById) {
       throw new NotFoundError("Ainda não possuimos nenhum post!!!");
     }

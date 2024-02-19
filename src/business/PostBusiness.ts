@@ -43,7 +43,7 @@ export class PostBusiness {
     private hashManager: HashManager,
     private idGenerator: IdGenerator
   ) {}
-
+  
   public createPost = async (
     input: CreatePostInputDTO
   ): Promise<CreatePostOutputDTO> => {
@@ -76,7 +76,6 @@ export class PostBusiness {
       dislikes: post.getDislikes(),
       created_at: post.getCreatedAt(),
       updated_at: post.getUpdatedAt(),
-      
     };
 
     await this.postDataBase.insertPost(newPostDB);
@@ -162,7 +161,6 @@ export class PostBusiness {
       dislikes: post.getDislikes(),
       created_at: post.getCreatedAt(),
       updated_at: post.getUpdatedAt(),
-      
     };
 
     await this.postDataBase.updatePost(newPostDB);
@@ -176,57 +174,60 @@ export class PostBusiness {
     input: GetAllPostsInputDTO
   ): Promise<GetAllPostsOutputDTO> => {
     const { token } = input;
-
+  
     const payload = this.tokenManager.getPayload(token);
-
+  
     if (!payload) {
       throw new BadRequestError("Faça loguin novamente!!!");
     }
-
-      const postsDB = await this.postDataBase.getAllPosts();
-
+  
+    const postsDB = await this.postDataBase.getAllPosts();
+  
     if (!postsDB) {
       throw new NotFoundError("Ainda não possuimos nenhum post!!!");
     }
-
-    
-
-    const postModel = postsDB.map((p) => {
-      const post = new Post(
-        p.id,
-        p.creator_id,
-        p.content,
-        p.likes,
-        p.dislikes,
-        p.created_at,
-        p.updated_at,
-        p.creator_name
-      );
-
-      const results: PostModelForCratorName = {
-        id: post.getId(),
-      
-        content: post.getContent(),
-        likes: post.getLikes(),
-        dislikes: post.getDislikes(),
-        createdAt: post.getCreatedAt(),
-        updatedAt: post.getUpdatedAt(),
-        creator:{
-          creatorId: post.getCreatorId(),
-          creatorName:post.getCreatorName()
-        }
-      };
-
-      return results;
-    });
-
-
-
-    const output: GetAllPostsOutputDTO = postModel;
-
-    return output;
-  };
   
+    const postModel = await Promise.all(postsDB.map(async (p) => {
+      try {
+        const res = await this.postDataBase.getLengthByPost(p.id);
+  
+        const post = new Post(
+          p.id,
+          p.creator_id,
+          p.content,
+          p.likes,
+          p.dislikes,
+          p.created_at,
+          p.updated_at,
+          p.creator_name
+        );
+  
+        const results: PostModelForCratorName = {
+          id: post.getId(),
+          content: post.getContent(),
+          likes: post.getLikes(),
+          dislikes: post.getDislikes(),
+          createdAt: post.getCreatedAt(),
+          updatedAt: post.getUpdatedAt(),
+          quantityComments: res, 
+          creator: {
+            creatorId: post.getCreatorId(),
+            creatorName: post.getCreatorName(),
+          },
+        };
+  
+        return results;
+      } catch (error) {
+        console.error("Erro ao buscar o tamanho dos commentários:", error);
+        throw new BadRequestError("Erro ao buscar o tamanho dos commentários!!!");
+      }
+    }));
+  
+    const output:GetAllPostsOutputDTO = postModel
+    
+    return output ;
+  };
+
   public likeOrDislikePost = async (
     input: LikeOrDislikePostInputDTO
   ): Promise<LikeOrDislikePostOutputDTO> => {
@@ -271,27 +272,20 @@ export class PostBusiness {
       likeOrDislikeDB
     );
 
-
-   
-
     if (likeDislikeExist === POST_LIKE.ALREADY_LIKED) {
       if (like) {
-
         await this.postDataBase.deleteLikeOrDislike(likeOrDislikeDB);
         postModel.removeLike();
       } else {
-
         await this.postDataBase.updateLikeOrDislike(likeOrDislikeDB);
         postModel.removeLike();
         postModel.addDislike();
       }
     } else if (likeDislikeExist === POST_LIKE.ALREADY_DISLIKED) {
       if (!like) {
-
         await this.postDataBase.deleteLikeOrDislike(likeOrDislikeDB);
         postModel.removeDislike();
       } else {
-
         await this.postDataBase.updateLikeOrDislike(likeOrDislikeDB);
         postModel.removeDislike();
         postModel.addLike();
@@ -300,7 +294,6 @@ export class PostBusiness {
       await this.postDataBase.insertLikeOrDislike(likeOrDislikeDB);
       like ? postModel.addLike() : postModel.addDislike();
     }
-
 
     const newPostDBLikedOrDisliked: PostDB = {
       id: postModel.getId(),

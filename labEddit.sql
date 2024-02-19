@@ -1,4 +1,4 @@
--- Active: 1703030644373@@127.0.0.1@3306
+-- Active: 1707508068594@@127.0.0.1@3306
 
 CREATE TABLE
     users (
@@ -53,3 +53,15 @@ CREATE TABLE
         FOREIGN KEY (user_id) REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
         FOREIGN KEY (post_id) REFERENCES posts (id) ON UPDATE CASCADE ON DELETE CASCADE
     );
+
+
+SELECT  posts.id AS postID, posts.creator_id AS creatorID, posts.content AS contentPost,  comments.content  
+FROM  posts 
+INNER JOIN comments 
+ON postID = comments.post_id
+WHERE postID ='0316b2bd-c1e4-450e-8ae0-db6658a59c5e';
+
+
+SELECT * FROM posts;
+
+UPDATE users SET role = 'ADMIN' WHERE id = '107f9e6e-24fe-4460-a54d-df8e54d96be7';

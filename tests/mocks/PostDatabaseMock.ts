@@ -1,4 +1,6 @@
+import { string } from "zod";
 import { BaseDatabase } from "../../src/dataBase/BaseDatabase";
+import { CommentModelByPost, CommentsDB } from "../../src/Models/Comment";
 import {
   likeOrDislike,
   POST_LIKE,
@@ -32,13 +34,46 @@ const PostMockDBAndCreator: PostDBAndCreator[] = [
   },
 ];
 
-const PostMockDBAndCreatorName:PostModelForCratorName = {
+const commentModelByPostMock:CommentModelByPost = {
+  post:{
+  id:"id-mock",
+  content: "Conteudo do post MOCK",
+  likes: 0,
+  dislikes: 0,
+  createdAt: expect.any(String),
+  updatedAt: expect.any(String),
+  creator: {
+    creatorId: "id-mock-fulano",
+    creatorName:"Fulano"
+  },
+},
+  comments:
+  [{
+    id: "id-mock",
+    postId: "id-mock",
+    content: "Conteudo do comment Mock",
+    likes: 0,
+    dislikes: 0,
+    createdAt: expect.any(String),
+    updatedAt: expect.any(String),
+    creator: {
+      idCreator: "id-mock-fulano",
+      creatorName: "Fulano",
+    }
+  }]
+
+
+}
+
+
+const postMockDBAndCreatorName:PostModelForCratorName = {
     id: "id-mock",
     content: "Conteudo do post MOCK",
     likes: 0,
     dislikes: 0,
     createdAt: expect.any(String),
     updatedAt: expect.any(String),
+    quantityComments: 10,
     creator: {
       creatorId: "id-mock-fulano",
       creatorName:"Fulano"
@@ -58,6 +93,21 @@ export class PostDatabaseMock extends BaseDatabase {
     const output = PostMockDBAndCreator;
     return output;
   };
+
+
+  public getLengthByPost = async (id:string):Promise<number> => {
+    const output:number =  await commentModelByPostMock.comments.length
+      
+
+      if(output < 1){
+        return 0
+      }else{
+        return output
+      }
+  
+    return output;
+  };
+
 
   public updatePost = async (PostMock: PostDB): Promise<void> => {};
 

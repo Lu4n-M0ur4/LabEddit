@@ -27,7 +27,13 @@ export class UserBusiness {
 
     const payload = this.tokenManager.getPayload(token);
 
-    if (!payload || payload.role !== USER_ROLES.ADMIN) {
+    if (!payload) {
+      throw new BadRequestError("Faça loguin novamente!!!");
+    }
+  
+
+    
+    if (payload.role !== USER_ROLES.ADMIN) {
       throw new BadRequestError("Somente administradores podem acessar!!!");
     }
 

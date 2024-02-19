@@ -1,5 +1,12 @@
-import { POST_LIKE, PostDB, PostDBAndCreator, PostModelForCratorName, likeOrDislike } from "../Models/Post";
+import {
+  POST_LIKE,
+  PostDB,
+  PostDBAndCreator,
+  PostModelForCratorName,
+  likeOrDislike,
+} from "../Models/Post";
 import { BaseDatabase } from "./BaseDatabase";
+import { CommentsDataBase } from "./CommentDataBase";
 import { UserDataBase } from "./UserDataBase";
 
 export class PostDataBase extends BaseDatabase {
@@ -7,26 +14,47 @@ export class PostDataBase extends BaseDatabase {
   public static TABLE_LIKE_DISLIKE = "likes_dislikes_posts";
 
   public getAllPosts = async (): Promise<PostDBAndCreator[] | undefined> => {
-    const output = await BaseDatabase.connection(
-      PostDataBase.TABLE_POST
-    )
-    .select(
-      `${PostDataBase.TABLE_POST}.id`,
-      `${PostDataBase.TABLE_POST}.creator_id`,
-      `${PostDataBase.TABLE_POST}.content`,
-      `${PostDataBase.TABLE_POST}.likes`,
-      `${PostDataBase.TABLE_POST}.dislikes`,
-      `${PostDataBase.TABLE_POST}.created_at`,
-      `${PostDataBase.TABLE_POST}.updated_at`,
-      `${UserDataBase.TABLE_USER}.name as creator_name`,
-    )
-    .join(
-      `${UserDataBase.TABLE_USER}`,
-      `${PostDataBase.TABLE_POST}.creator_id`,
-      "=",
-      `${UserDataBase.TABLE_USER}.id`,
-    )
+    const output = await BaseDatabase.connection(PostDataBase.TABLE_POST)
+      .select(
+        `${PostDataBase.TABLE_POST}.id`,
+        `${PostDataBase.TABLE_POST}.creator_id`,
+        `${PostDataBase.TABLE_POST}.content`,
+        `${PostDataBase.TABLE_POST}.likes`,
+        `${PostDataBase.TABLE_POST}.dislikes`,
+        `${PostDataBase.TABLE_POST}.created_at`,
+        `${PostDataBase.TABLE_POST}.updated_at`,
+        `${UserDataBase.TABLE_USER}.name as creator_name`
+      )
+      .join(
+        `${UserDataBase.TABLE_USER}`,
+        `${PostDataBase.TABLE_POST}.creator_id`,
+        "=",
+        `${UserDataBase.TABLE_USER}.id`
+      );
 
+    return output;
+  };
+  public getLengthByPost = async (id: string): Promise<any> => {
+    const output = await BaseDatabase.connection(CommentsDataBase.TABLE_COMMENT)
+      .select(
+        `${PostDataBase.TABLE_POST}.id AS postID`,
+        `${PostDataBase.TABLE_POST}.content AS content_post`,
+        `${CommentsDataBase.TABLE_COMMENT}.content`
+      )
+      .join(
+        `${PostDataBase.TABLE_POST}`,
+        `${PostDataBase.TABLE_POST}.id`,
+        "=",
+        `${CommentsDataBase.TABLE_COMMENT}.post_id`
+      )
+      .where({ [`${PostDataBase.TABLE_POST}.id`]: id });
+
+      if(output.length < 1){
+        return 0
+      }else{
+        return output.length
+      }
+  
     return output;
   };
 
@@ -40,57 +68,48 @@ export class PostDataBase extends BaseDatabase {
       .update(newPost);
   };
 
-  public findPost = async (id: string): Promise<PostDBAndCreator | undefined> => {
-    const [output] = await BaseDatabase.connection(
-      PostDataBase.TABLE_POST
-    )
-    .select(
-      `${PostDataBase.TABLE_POST}.id`,
-      `${PostDataBase.TABLE_POST}.creator_id`,
-      `${PostDataBase.TABLE_POST}.content`,
-      `${PostDataBase.TABLE_POST}.likes`,
-      `${PostDataBase.TABLE_POST}.dislikes`,
-      `${PostDataBase.TABLE_POST}.created_at`,
-      `${PostDataBase.TABLE_POST}.updated_at`,
-      `${UserDataBase.TABLE_USER}.name as creator_name`,
-    )
-    .join(
-      `${UserDataBase.TABLE_USER}`,
-      `${PostDataBase.TABLE_POST}.creator_id`,
-      "=",
-      `${UserDataBase.TABLE_USER}.id`,
-    )
-    .where({[`${PostDataBase.TABLE_POST}.id`]:id });
-
+  public findPost = async (
+    id: string
+  ): Promise<PostDBAndCreator | undefined> => {
+    const [output] = await BaseDatabase.connection(PostDataBase.TABLE_POST)
+      .select(
+        `${PostDataBase.TABLE_POST}.id`,
+        `${PostDataBase.TABLE_POST}.creator_id`,
+        `${PostDataBase.TABLE_POST}.content`,
+        `${PostDataBase.TABLE_POST}.likes`,
+        `${PostDataBase.TABLE_POST}.dislikes`,
+        `${PostDataBase.TABLE_POST}.created_at`,
+        `${PostDataBase.TABLE_POST}.updated_at`,
+        `${UserDataBase.TABLE_USER}.name as creator_name`
+      )
+      .join(
+        `${UserDataBase.TABLE_USER}`,
+        `${PostDataBase.TABLE_POST}.creator_id`,
+        "=",
+        `${UserDataBase.TABLE_USER}.id`
+      )
+      .where({ [`${PostDataBase.TABLE_POST}.id`]: id });
 
     return output;
-
-    
   };
-
 
   public findPostLikedDisliked = async (
     likeDislikeExist: likeOrDislike
   ): Promise<POST_LIKE | undefined> => {
-    const [res]:likeOrDislike[] | undefined = await BaseDatabase.connection(
+    const [res]: likeOrDislike[] | undefined = await BaseDatabase.connection(
       PostDataBase.TABLE_LIKE_DISLIKE
     ).where({
       user_id: likeDislikeExist.user_id,
       post_id: likeDislikeExist.post_id,
     });
 
-    
-
-    if (res === undefined) { 
+    if (res === undefined) {
       return undefined;
     } else if (res.like === 1) {
       return POST_LIKE.ALREADY_LIKED;
     } else {
       return POST_LIKE.ALREADY_DISLIKED;
     }
-
-
-    
   };
 
   public insertLikeOrDislike = async (
@@ -123,12 +142,9 @@ export class PostDataBase extends BaseDatabase {
       .delete();
   };
 
-
   public deletePost = async (id: string): Promise<void> => {
     await BaseDatabase.connection(PostDataBase.TABLE_POST)
       .where({ id })
       .delete();
   };
-
-
 }

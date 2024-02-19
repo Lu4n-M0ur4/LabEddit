@@ -31,6 +31,7 @@ describe("Testando usabilidadde de postBusiness", ()=>{
     dislikes: 0,
     createdAt: expect.any(String),
     updatedAt: expect.any(String),
+    quantityComments: 1,
     creator: {
       creatorId: "id-mock-fulano",
       creatorName:"Fulano"
