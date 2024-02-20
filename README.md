@@ -8,7 +8,6 @@ Deploy da aplicação  [AQUI](https://labeddit-deploy.onrender.com) !
 
 Documentação do Backend (Postman) da aplicação [AQUI](https://documenter.getpostman.com/view/28316317/2sA2r9UhLq) !
 
-Deploy da aplicação Front-end [AQUI](https://labeddit-front-end-nu.vercel.app/) !
 
 Repositório da aplicação Front-end [AQUI](https://github.com/Lu4n-M0ur4/Labeddit-FrontEnd) !
 
