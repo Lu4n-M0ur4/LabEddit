@@ -10,6 +10,8 @@ Documentação do Backend (Postman) da aplicação [AQUI](https://documenter.get
 
 Deploy da aplicação Front-end [AQUI](https://labeddit-front-end-nu.vercel.app/) !
 
+Repositório da aplicação Front-end [AQUI](https://github.com/Lu4n-M0ur4/Labeddit-FrontEnd) !
+
 <br>
 
 ## Tecnologias e Ferramentas Utilizadas
